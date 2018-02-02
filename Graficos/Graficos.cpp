@@ -12,12 +12,20 @@
 #include <iostream>
 using namespace std;
 
+//Declaracion de la ventana
+GLFWwindow *window;
+
 GLfloat red = 0.0f, green = 0.0f, blue = 0.0f;
 GLfloat ty, tx = 0.0f;
 
 //Aqui esta bien para cambiar los valores de las variables de mi programa
 void actualizar() {
-
+	int estadoArriba = glfwGetKey(window, GLFW_KEY_UP);
+	if (estadoArriba == GLFW_PRESS) {
+		if (ty < 0.95) {
+			ty += 0.05f;
+		}
+	}
 }
 
 void dibujar() {
@@ -35,25 +43,25 @@ void dibujar() {
 	glPopMatrix();
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (ty < 0.95 && key == GLFW_KEY_UP && action == GLFW_REPEAT) {
+/*void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (ty < 0.95 && key == GLFW_KEY_UP && (action == GLFW_PRESS|| action == GLFW_REPEAT)) {
 		ty += 0.05f;
 	}
-	if (ty > -1 && key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
+	if (ty > -1 && key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
 		ty -= 0.05f;
 	}
-	if (tx < 1 && key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
+	if (tx < 1 && key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
 		tx += 0.05f;
 	}
-	if (tx > -1 && key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+	if (tx > -1 && key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
 		tx -= 0.05f;
 	}
-}
+}*/
 
 int main()
 {
 	//Declaracion de la ventana
-	GLFWwindow *window;
+	//GLFWwindow *window;
 
 	//Propiedades de la ventana
 	GLfloat ancho = 1024;
@@ -90,7 +98,7 @@ int main()
 	const GLubyte *version = glGetString(GL_VERSION);
 	cout << "Version de OpenGL: " << version << endl;
 
-	glfwSetKeyCallback(window, key_callback);
+	//glfwSetKeyCallback(window, key_callback);
 
 	//Ciclo de dibujo
 	while (!glfwWindowShouldClose(window)) {		
