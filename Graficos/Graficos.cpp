@@ -13,44 +13,41 @@
 using namespace std;
 
 GLfloat red = 0.0f, green = 0.0f, blue = 0.0f;
-GLfloat angulo = 0.0f;
+GLfloat ty, tx = 0.0f;
 
 //Aqui esta bien para cambiar los valores de las variables de mi programa
 void actualizar() {
-	/*if(red !=1) red += 0.001;
-	if(green !=1 && red >= 1) green += 0.001;
-	if(blue !=1 && red >= 1 && green >= 1) blue += 0.001;
-	*/
-	if (angulo < 360) {
-		angulo += 0.05;
-	}
-	else {
-		angulo = 0.0f;
-	}
+
 }
 
 void dibujar() {
 	glPushMatrix();
-
-	//glTranslatef(0.2f, -0.2f, 0.0f);
-	//glRotatef(angulo, 1.0f, 0.0f, 0.0f); //Afecta eje X
-	//glRotatef(angulo, 0.0f, 1.0f, 0.0f); //Afecta eje Y
-	glRotatef(angulo, 0.0f, 0.0f, 1.0f); //Afecta eje Z
-	glScalef(0.2f, 0.2f, 0.2f);
-
+	glTranslatef(tx, ty, 0.0f);
+	glScalef(0.08f, 0.08f, 0.08f);
 	glBegin(GL_TRIANGLES);
-
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(-1.0, -0.5, 0.0);
-
+	glVertex3f(-1.0, 0.0, 0.0);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(0.0, 0.5, 0.0);
-
+	glVertex3f(0.0, 1.0, 0.0);
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(1.0, -0.5, 0.0);
-
+	glVertex3f(1.0, 0.0, 0.0);
 	glEnd();
 	glPopMatrix();
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (ty < 0.95 && key == GLFW_KEY_UP && action == GLFW_REPEAT) {
+		ty += 0.05f;
+	}
+	if (ty > -1 && key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
+		ty -= 0.05f;
+	}
+	if (tx < 1 && key == GLFW_KEY_RIGHT && action == GLFW_REPEAT) {
+		tx += 0.05f;
+	}
+	if (tx > -1 && key == GLFW_KEY_LEFT && action == GLFW_REPEAT) {
+		tx -= 0.05f;
+	}
 }
 
 int main()
@@ -92,6 +89,8 @@ int main()
 
 	const GLubyte *version = glGetString(GL_VERSION);
 	cout << "Version de OpenGL: " << version << endl;
+
+	glfwSetKeyCallback(window, key_callback);
 
 	//Ciclo de dibujo
 	while (!glfwWindowShouldClose(window)) {		
