@@ -17,20 +17,47 @@ GLFWwindow *window;
 
 GLfloat red = 0.0f, green = 0.0f, blue = 0.0f;
 GLfloat ty, tx = 0.0f;
+GLfloat angulo = 0.0f;
+
+double tiempoAnterior = 0.0;
+double velocidad = 0.1;
 
 //Aqui esta bien para cambiar los valores de las variables de mi programa
 void actualizar() {
+	double tiempoActual = glfwGetTime();
+	double tiempoTranscurrido = tiempoActual - tiempoAnterior;
+
 	int estadoArriba = glfwGetKey(window, GLFW_KEY_UP);
 	if (estadoArriba == GLFW_PRESS) {
 		if (ty < 0.95) {
-			ty += 0.05f;
+			ty += velocidad*tiempoTranscurrido;
 		}
 	}
+	int estadoAbajo = glfwGetKey(window, GLFW_KEY_DOWN);
+	if (estadoAbajo == GLFW_PRESS) {
+		if (ty > -0.95) {
+			ty -= velocidad*tiempoTranscurrido;
+		}
+	}
+	int estadoDerecha = glfwGetKey(window, GLFW_KEY_RIGHT);
+	if (estadoDerecha == GLFW_PRESS) {
+		if (angulo > -90) {
+			angulo-=0.1;
+		}
+	}
+	int estadoIzquierda = glfwGetKey(window, GLFW_KEY_LEFT);
+	if (estadoIzquierda == GLFW_PRESS) {
+		if (angulo < 90) {
+			angulo += 0.1;
+		}
+	}
+	tiempoAnterior = tiempoActual;
 }
 
 void dibujar() {
 	glPushMatrix();
 	glTranslatef(tx, ty, 0.0f);
+	glRotatef(angulo, 0.0f, 0.0f, 1.0f);
 	glScalef(0.08f, 0.08f, 0.08f);
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -99,6 +126,8 @@ int main()
 	cout << "Version de OpenGL: " << version << endl;
 
 	//glfwSetKeyCallback(window, key_callback);
+
+	tiempoAnterior = glfwGetTime();
 
 	//Ciclo de dibujo
 	while (!glfwWindowShouldClose(window)) {		
