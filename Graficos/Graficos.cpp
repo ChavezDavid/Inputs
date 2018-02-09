@@ -18,9 +18,36 @@ GLFWwindow *window;
 GLfloat red = 0.0f, green = 0.0f, blue = 0.0f;
 GLfloat ty, tx = 0.0f;
 GLfloat angulo = 0.0f;
+GLfloat velocidadAngular = 180.0f;
+
+GLfloat enemigoX = 0.0f;
+GLfloat enemigoY = 0.6f;
 
 double tiempoAnterior = 0.0;
-double velocidad = 0.1;
+double velocidad = 0.5;
+
+short bala = 0;
+
+void checarColison() {
+	if (tx >= enemigoX - 0.08f && tx <= enemigoX + 0.08f && ty >= enemigoY - 0.08f && ty <= enemigoY + 0.08f) {
+		exit(0);
+	}
+}
+
+void disparoBala() {
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, 0.0f);
+	glScalef(0.01f, 0.01f, 0.01f);
+	glBegin(GL_QUADS);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(-1.0, 0.0, 0.0);
+	glVertex3f(1.0, 0.0, 0.0);
+	glVertex3f(1.0, -1.0, 0.0);
+	glVertex3f(-1.0, -1.0, 0.0);
+	glEnd();
+	glPopMatrix();
+	bala = 0;
+}
 
 //Aqui esta bien para cambiar los valores de las variables de mi programa
 void actualizar() {
@@ -29,32 +56,45 @@ void actualizar() {
 
 	int estadoArriba = glfwGetKey(window, GLFW_KEY_UP);
 	if (estadoArriba == GLFW_PRESS) {
-		if (ty < 0.95) {
-			ty += velocidad*tiempoTranscurrido;
-		}
+		/*if (ty < 0.95) {
+			ty += velocidad * tiempoTranscurrido;
+		}*/
+		tx += cos((angulo + 90) * (3.14159f / 180.0f)) * velocidad * tiempoTranscurrido;
+		ty += sin((angulo + 90) * (3.14159f / 180.0f)) * velocidad * tiempoTranscurrido;
 	}
-	int estadoAbajo = glfwGetKey(window, GLFW_KEY_DOWN);
+	/*int estadoAbajo = glfwGetKey(window, GLFW_KEY_DOWN);
 	if (estadoAbajo == GLFW_PRESS) {
 		if (ty > -0.95) {
-			ty -= velocidad*tiempoTranscurrido;
+			ty -= velocidad * tiempoTranscurrido;
 		}
-	}
+	}*/
 	int estadoDerecha = glfwGetKey(window, GLFW_KEY_RIGHT);
 	if (estadoDerecha == GLFW_PRESS) {
-		if (angulo > -90) {
-			angulo-=0.1;
-		}
+			angulo -= velocidadAngular * tiempoTranscurrido;
+			if (angulo < 0) {
+				angulo = 360.0f;
+			}
 	}
 	int estadoIzquierda = glfwGetKey(window, GLFW_KEY_LEFT);
 	if (estadoIzquierda == GLFW_PRESS) {
-		if (angulo < 90) {
-			angulo += 0.1;
+			angulo += velocidadAngular * tiempoTranscurrido;
+			if (angulo > 360) {
+				angulo = 0.0f;
+			}
+	}
+	int estadoDisparo = glfwGetKey(window, GLFW_KEY_SPACE);
+	if (estadoDisparo == GLFW_PRESS) {
+		if (bala == 0) {
+			disparoBala();
+			bala = 1;
 		}
 	}
+
+	checarColison();
 	tiempoAnterior = tiempoActual;
 }
 
-void dibujar() {
+void dibujarHeroe() {
 	glPushMatrix();
 	glTranslatef(tx, ty, 0.0f);
 	glRotatef(angulo, 0.0f, 0.0f, 1.0f);
@@ -62,12 +102,28 @@ void dibujar() {
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(-1.0, 0.0, 0.0);
-	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(0.0, 1.0, 0.0);
-	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(1.0, 0.0, 0.0);
 	glEnd();
 	glPopMatrix();
+}
+
+void dibujarEnemigo() {
+	glPushMatrix();
+	glTranslatef(enemigoX, enemigoY, 0.0f);
+	glScalef(0.08f, 0.08f, 0.08f);
+	glBegin(GL_TRIANGLES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(-1.0, 0.0, 0.0);
+	glVertex3f(0.0, 1.0, 0.0);
+	glVertex3f(1.0, 0.0, 0.0);
+	glEnd();
+	glPopMatrix();
+}
+
+void dibujar() {
+	dibujarHeroe();
+	dibujarEnemigo();
 }
 
 /*void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
